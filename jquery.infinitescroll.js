@@ -26,43 +26,6 @@
       }
     };
 
-
-    // find the number to increment in the path.
-    function determinePath(path){
-
-     if ( path.match(/^(.*?)\b2\b(.*?$)/) ){  
-          path = path.match(/^(.*?)\b2\b(.*?$)/).slice(1);
-          
-      // if there is any 2 in the url at all.    
-      } else if (path.match(/^(.*?)2(.*?$)/)){
-        
-          // page= is used in django:
-          //   http://www.infinite-scroll.com/changelog/comment-page-1/#comment-127
-          if ( path.match(/^(.*?page=)2(\/.*|$)/) ){
-            path = path.match(/^(.*?page=)2(\/.*|$)/).slice(1);
-            return path;
-          }
-          
-          debug('Trying backup next selector parse technique. Treacherous waters here, matey.');
-          path = path.match(/^(.*?)2(.*?$)/).slice(1);
-      } else {
-          
-        // page= is used in drupal too but second page is page=1 not page=2:
-        // thx Jerod Fritz, vladikoff
-        if (path.match(/^(.*?page=)1(\/.*|$)/)) {
-          path = path.match(/^(.*?page=)1(\/.*|$)/).slice(1);
-          return path;
-        }  
-
-        if ($.isFunction(opts.pathParse)){
-          return [path];
-        } else {
-          debug('Sorry, we couldn\'t parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.');    
-          props.isInvalidPage = true;  //prevent it from running on this page.
-        }
-      }
-      return path;
-    };
     
     // determine filtering nav for multiple instances
     function filterNav() {
@@ -153,26 +116,25 @@
 	        frag = document.createDocumentFragment();
 	        
 	        
-	        if ($.isFunction(opts.pathParse)){
-		        // if we got a custom path parsing function, pass in our path guess and page iteration
-		        desturl = opts.pathParse(path.join('2'), opts.currPage);
-		    } else {
-		      	desturl = path.join( opts.currPage );
-		    }
-		    box.load( desturl + ' ' + opts.itemSelector,null,loadCallback);
+		    box.load( nextPath + ' ' + opts.itemSelector,null,loadCallback);
 		    
 	    });
         
     };
     
-    function loadCallback(){
+    function loadCallback(html){
         // if we've hit the last page..
-		
-        if (opts.isDone){ 
+		if (opts.isDone){ 
             showDoneMsg();
             return false;    
               
         } else {
+          
+          
+            // get new path
+            
+		    nextPath = $(html).find(opts.navSelector).attr('href');
+		
           
             var children = box.children();
             
@@ -271,11 +233,12 @@
     var relurl        = /(.*?\/\/).*?(\/.*)/,
         path          = $(opts.nextSelector).attr('href');
     
+    var nextPath      = path; // updated with each ajax call, from the retrieved content
+    
     
     if (!path) { debug('Navigation selector not found'); return; }
     
-    // set the path to be a relative URL from root.
-    path          = determinePath(path);
+    
 	    
     // define loading msg
     props.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img alt="Loading..." src="'+
