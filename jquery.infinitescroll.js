@@ -13,7 +13,7 @@
     // console log wrapper.
     function debug(){
       if (opts.debug) { window.console && console.log.call(console,arguments)}
-    }
+    };
     
     // grab each selector option and see if any fail.
     function areSelectorsValid(opts){
@@ -24,7 +24,7 @@
         } 
         return true;
       }
-    }
+    };
 
 
     // find the number to increment in the path.
@@ -62,13 +62,13 @@
         }
       }
       return path;
-    }
+    };
     
     // determine filtering nav for multiple instances
     function filterNav() {
     	opts.isFiltered = true;
     	return binder.trigger( "error.infscr."+opts.infid, [302] );
-    }
+    };
 	// Calculate internal height (used for local scroll)
 	function hiddenHeight(element)
 		{
@@ -77,14 +77,14 @@
 			height = height + $(this).outerHeight(false);
 		});
 		return height;
-		}
+		};
 	//Generate InstanceID based on random data (to give consistent but different ID's)
 	function generateInstanceID(element)
 		{
 		var number = $(element).length + $(element).html().length + $(element).attr("class").length
 			+ $(element).attr("id").length;
 		opts.infid	= number;
-		}
+		};
     function isNearBottom(){
 	// distance remaining in the scroll
       // computed as: document height - distance already scroll - viewport height - buffer
@@ -108,7 +108,7 @@
       
       // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
       return (pixelsFromWindowBottomToBottom  - opts.bufferPx < opts.pixelsFromNavToBottom);    
-    } 
+    };
     
     function showDoneMsg(){
       props.loadingMsg
@@ -120,7 +120,7 @@
       
       // user provided callback when done    
       opts.errorCallback();
-    }
+    };
     
     function infscrSetup(){
         if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isFiltered || opts.isPaused) return; 
@@ -128,7 +128,7 @@
         if ( !isNearBottom(opts,props) )  return ;
         $(document).trigger('retrieve.infscr.'+opts.infid);
                 
-    }  // end of infscrSetup()
+    };  // end of infscrSetup()
           
   
       
@@ -163,7 +163,7 @@
 		    
 	    });
         
-    }
+    };
     
     function loadCallback(){
         // if we've hit the last page..
@@ -205,7 +205,7 @@
         
             if (!opts.animate) opts.isDuringAjax = false; // once the call is done, we can allow it again.
         }
-    }
+    };
     
     function initPause(pauseValue) {
     	if (pauseValue == "pause") {
@@ -217,7 +217,7 @@
     	}
     	debug('Paused: ' + opts.isPaused);
     	return false;
-    }
+    };
     function infscrError(xhr){
     	if (!opts.isDone && xhr == 404) {
 		    // die if we're out of pages.
@@ -240,7 +240,7 @@
 	    	  .unbind('error.infscr.'+opts.infid);
 	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
 	    }
-    }
+    };
     
     // smartscroll = debounced scroll event
     // http://paulirish.com/2009/throttled-smartresize-jquery-event-handler/
@@ -314,7 +314,7 @@
     
     return this;
   
-  }  // end of $.fn.infinitescroll()
+  };  // end of $.fn.infinitescroll()
   
 
   
