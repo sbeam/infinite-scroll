@@ -109,7 +109,7 @@
 	        // increment the URL bit. e.g. /page/3/
 	        opts.currPage++;
 	        
-	        debug('heading into ajax',path);
+	        debug('heading into ajax',nextPath);
 	        
 	        // if we're dealing with a table we can't use DIVs
 	        box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
@@ -123,6 +123,10 @@
 	    });
         
     };
+
+    function getNextPageURL() {
+        return ($.isFunction(opts.nextSelector))? opts.nextSelector(opts.currPage+1) : $(opts.nextSelector).attr('href');
+    };
     
     function loadCallback(html){
         // if we've hit the last page..
@@ -132,11 +136,8 @@
               
         } else {
           
-          
             // get new path
-            
-		    nextPath = $(html).find(opts.navSelector).attr('href');
-		
+		    nextPath = getNextPageURL();
           
             var children = box.children();
             
@@ -231,14 +232,10 @@
     // loadMsgSelector - if we want to place the load message in a specific selector, defaulted to the contentSelector
     opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
     
-    // get the relative URL - everything past the domain name.
-    var relurl        = /(.*?\/\/).*?(\/.*)/,
-        path          = $(opts.nextSelector).attr('href');
     
-    var nextPath      = path; // updated with each ajax call, from the retrieved content
-    
-    
-    if (!path) { debug('Navigation selector not found'); return; }
+    var nextPath = getNextPageURL();
+
+    if (!nextPath) { debug('Navigation selector not found'); return; }
     
     
 	    
