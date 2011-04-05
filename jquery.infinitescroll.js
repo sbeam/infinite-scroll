@@ -48,29 +48,25 @@
 			+ $(element).attr("id").length;
 		opts.infid	= number;
 		};
-    function isNearBottom(){
+
 	// distance remaining in the scroll
-      // computed as: document height - distance already scroll - viewport height - buffer
+    // computed as: document height - distance already scroll - viewport height - buffer
+    function isNearBottom() {
       
-      if(opts.container.nodeName=="HTML")
-	  	{
-		var pixelsFromWindowBottomToBottom = 0 
-                + $(document).height()  
-                // have to do this bs because safari doesnt report a scrollTop on the html element
-                - ($(opts.container).scrollTop() || $(opts.container.ownerDocument.body).scrollTop())
-                - $(window).height();	
-		}
-	  else
-	  	{
-      	var pixelsFromWindowBottomToBottom = 0 
-                + hiddenHeight(opts.container) - $(opts.container).scrollTop() - $(opts.container).height();
-		
-		}      
-      
-      debug('math:', pixelsFromWindowBottomToBottom, opts.pixelsFromNavToBottom);
-      
-      // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
-      return (pixelsFromWindowBottomToBottom  - opts.bufferPx < opts.pixelsFromNavToBottom);    
+        if(opts.container.nodeName=="HTML") {
+            var d_y = 0 + $(document).height()  
+                        // have to do this bs because safari doesnt report a scrollTop on the html element
+                        - ($(opts.container).scrollTop() || $(opts.container.ownerDocument.body).scrollTop())
+                        - $(window).height();	
+            debug('math:', d_y, opts.pixelsFromNavToBottom);
+            // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
+            return (d_y  - opts.bufferPx < opts.pixelsFromNavToBottom);    
+        }
+        else {
+            var d_y = 0 + hiddenHeight(opts.container) - $(opts.container).scrollTop() - $(opts.container).height();
+            debug('math:', d_y, opts.bufferPx);
+            return (d_y < opts.bufferPx);
+        }      
     };
     
     function showDoneMsg(){
