@@ -14,7 +14,7 @@ based on the original found here:
 2. removed broken attempts to auto-parse next-page URL (gregplaysguitar)
 3. does not depend on jQuery's filtering of returned HTML using the `itemSelector` option (although this is still available)
 4. allows option to specify a function to get the next-page URL
-5. recover 'localMode' option to allow use within an `overflow:auto` container, as opposed to the whole window - but renamed this option 'flowContainer'
+5. recovered "localMode" to allow use within an `overflow:auto` container, as opposed to the whole window - see option `container`
 
 ## Example
     // usage:
@@ -53,8 +53,12 @@ based on the original found here:
       loadingText  : "Loading...",      
                      // text accompanying loading image
                      // default: "<em>Loading the next set of posts...</em>"
+
+      container    : $('ul.posts'),
+                     // optional - scroll within this container, not the whole
+                     // window. CSS should define a height and overflow:auto
      
-      animate      : true,      
+      animate      : true,
                      // boolean, if the page will do an animated scroll when new content loads
                      // default: false
      
