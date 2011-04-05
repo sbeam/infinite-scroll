@@ -29,64 +29,65 @@
     
     // determine filtering nav for multiple instances
     function filterNav() {
-    	opts.isFiltered = true;
-    	return binder.trigger( "error.infscr."+opts.infid, [302] );
+        opts.isFiltered = true;
+        return binder.trigger( "error.infscr."+opts.infid, [302] );
     };
-	// Calculate internal height (used for local scroll)
-	function hiddenHeight(element)
-		{
-		var height = 0;
-		$(element).children().each(function() {
-			height = height + $(this).outerHeight(false);
-		});
-		return height;
-		};
-	//Generate InstanceID based on random data (to give consistent but different ID's)
-	function generateInstanceID(element)
-		{
-		var number = $(element).length + $(element).html().length + $(element).attr("class").length
-			+ $(element).attr("id").length;
-		opts.infid	= number;
-		};
+    
+    // Calculate internal height (used for local scroll)
+    function hiddenHeight(element) {
+        var height = 0;
+        $(element).children().each(function() {
+            height = height + $(this).outerHeight(false);
+        });
+        return height;
+    };
 
-	// distance remaining in the scroll
+    //Generate InstanceID based on random data (to give consistent but different ID's)
+    function generateInstanceID(element) {
+        var number = $(element).length + $(element).html().length + $(element).attr("class").length + $(element).attr("id").length;
+        opts.infid  = number;
+    };
+
+
+    // distance remaining in the scroll
     // computed as: document height - distance already scroll - viewport height - buffer
     function isNearBottom() {
       
         if(opts.container.nodeName=="HTML") {
-            var d_y = 0 + $(document).height()  
+            var d_y = $(document).height() - $(window).height()
                         // have to do this bs because safari doesnt report a scrollTop on the html element
-                        - ($(opts.container).scrollTop() || $(opts.container.ownerDocument.body).scrollTop())
-                        - $(window).height();	
+                        - ($(opts.container).scrollTop() || $(opts.container.ownerDocument.body).scrollTop());
+
             debug('math:', d_y, opts.pixelsFromNavToBottom);
             // if distance remaining in the scroll (including buffer) is less than the orignal nav to bottom....
             return (d_y  - opts.bufferPx < opts.pixelsFromNavToBottom);    
         }
-        else {
+        else { // non-window container (overflow:auto) - just sub the current offset from total height of kids
             var d_y = 0 + hiddenHeight(opts.container) - $(opts.container).scrollTop() - $(opts.container).height();
             debug('math:', d_y, opts.bufferPx);
             return (d_y < opts.bufferPx);
         }      
     };
     
+
     function showDoneMsg(){
-      props.loadingMsg
-        .find('img').hide()
-        .parent()
-          .find('div').html(opts.donetext).animate({opacity: 1},2000, function() {
-            $(this).parent().fadeOut('normal');
-          });
-      
-      // user provided callback when done    
-      opts.errorCallback();
+        props.loadingMsg
+                       .find('img').hide()
+                       .parent()
+                       .find('div').html(opts.donetext).animate({opacity: 1},2000, function() {
+                           $(this).parent().fadeOut('normal');
+                       });
+
+        // user provided callback when done    
+        opts.errorCallback();
     };
     
     function infscrSetup(){
         if (opts.isDuringAjax || opts.isInvalidPage || opts.isDone || opts.isFiltered || opts.isPaused) return; 
-        
+
         if ( !isNearBottom(opts,props) )  return ;
         $(document).trigger('retrieve.infscr.'+opts.infid);
-                
+
     };  // end of infscrSetup()
           
   
@@ -100,25 +101,25 @@
         // then hide the previous/next links after we're
         // sure the loading message was visible
         props.loadingMsg.appendTo( opts.loadMsgSelector ).show(opts.loadingMsgRevealSpeed, function(){
-	        $( opts.navSelector ).hide(); 
-	        
-	        // increment the URL bit. e.g. /page/3/
-	        opts.currPage++;
-	        
-	        debug('heading into ajax',nextPath);
-	        
-	        // if we're dealing with a table we can't use DIVs
-	        box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
-	        frag = document.createDocumentFragment();
-	        
-	        
+            $( opts.navSelector ).hide(); 
+            
+            // increment the URL bit. e.g. /page/3/
+            opts.currPage++;
+            
+            debug('heading into ajax',nextPath);
+            
+            // if we're dealing with a table we can't use DIVs
+            box = $(opts.contentSelector).is('table') ? $('<tbody/>') : $('<div/>');
+            frag = document.createDocumentFragment();
+            
+            
             var url = (opts.itemSelector)? nextPath + ' ' + opts.itemSelector : nextPath;
 
             box.load(url, null, loadCallback);
-		    
-	    });
-        
+            
+        });
     };
+
 
     function getNextPageURL() {
         return ($.isFunction(opts.nextSelector))? opts.nextSelector(opts.currPage+1) : $(opts.nextSelector).attr('href');
@@ -126,14 +127,14 @@
     
     function loadCallback(html){
         // if we've hit the last page..
-		if (opts.isDone){ 
+        if (opts.isDone){ 
             showDoneMsg();
             return false;    
               
         } else {
           
             // get new path
-		    nextPath = getNextPageURL();
+            nextPath = getNextPageURL();
           
             var children = box.children();
             
@@ -147,7 +148,7 @@
             while (box[0].firstChild){
               frag.appendChild(  box[0].firstChild );
             }
-           	$(opts.contentSelector)[0].appendChild(frag);
+            $(opts.contentSelector)[0].appendChild(frag);
             
             // fadeout currently makes the <em>'d text ugly in IE6
             props.loadingMsg.fadeOut('normal' ); 
@@ -169,38 +170,38 @@
     };
     
     function initPause(pauseValue) {
-    	if (pauseValue == "pause") {
-    		opts.isPaused = true;
-    	} else if (pauseValue == "resume") {
-    		opts.isPaused = false;
-    	} else {
-    		opts.isPaused = !opts.isPaused;
-    	}
-    	debug('Paused: ' + opts.isPaused);
-    	return false;
+        if (pauseValue == "pause") {
+            opts.isPaused = true;
+        } else if (pauseValue == "resume") {
+            opts.isPaused = false;
+        } else {
+            opts.isPaused = !opts.isPaused;
+        }
+        debug('Paused: ' + opts.isPaused);
+        return false;
     };
     function infscrError(xhr){
-    	if (!opts.isDone && xhr == 404) {
-		    // die if we're out of pages.
-	    	debug('Page not found. Self-destructing...');
-	    	showDoneMsg();
-	    	opts.isDone = true;
-	    	opts.currPage = 1; // if you need to go back to this instance
-	    	binder.unbind('scroll.infscr.'+opts.infid);
-	    	$(document).unbind('retrieve.infscr.'+opts.infid);
-    	}
-    	if (opts.isFiltered && xhr == 302) {
-    		// die if filtered.
-	    	debug('Filtered. Going to next instance...');
-	    	opts.isDone = true;
-	    	opts.currPage = 1; // if you need to go back to this instance
-	    	opts.isPaused = false;
-	    	binder.unbind('scroll.infscr.'+opts.infid, infscrSetup)
-	    	  .unbind('pause.infscr.'+opts.infid)
-	    	  .unbind('filter.infscr.'+opts.infid)
-	    	  .unbind('error.infscr.'+opts.infid);
-	    	$(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
-	    }
+        if (!opts.isDone && xhr == 404) {
+            // die if we're out of pages.
+            debug('Page not found. Self-destructing...');
+            showDoneMsg();
+            opts.isDone = true;
+            opts.currPage = 1; // if you need to go back to this instance
+            binder.unbind('scroll.infscr.'+opts.infid);
+            $(document).unbind('retrieve.infscr.'+opts.infid);
+        }
+        if (opts.isFiltered && xhr == 302) {
+            // die if filtered.
+            debug('Filtered. Going to next instance...');
+            opts.isDone = true;
+            opts.currPage = 1; // if you need to go back to this instance
+            opts.isPaused = false;
+            binder.unbind('scroll.infscr.'+opts.infid, infscrSetup)
+              .unbind('pause.infscr.'+opts.infid)
+              .unbind('filter.infscr.'+opts.infid)
+              .unbind('error.infscr.'+opts.infid);
+            $(document).unbind('retrieve.infscr.'+opts.infid,kickOffAjax);
+        }
     };
     
     // smartscroll = debounced scroll event
@@ -215,16 +216,16 @@
         props   = $.infinitescroll, // shorthand
         box, frag, desturl, thisPause, errorStatus;
     callback    = callback || function(){};
-	
+    
     if (!areSelectorsValid(opts)){ return false;  }
     
     opts.container   =  opts.container || document.documentElement;
                           
     // contentSelector we'll use for our .load()
     opts.contentSelector = opts.contentSelector || this;
-	// Generate unique instance ID
-	if(opts.infid==0)
-	generateInstanceID(opts.contentSelector);
+    // Generate unique instance ID
+    if(opts.infid==0)
+    generateInstanceID(opts.contentSelector);
     // loadMsgSelector - if we want to place the load message in a specific selector, defaulted to the contentSelector
     opts.loadMsgSelector = opts.loadMsgSelector || opts.contentSelector;
     
@@ -234,32 +235,32 @@
     if (!nextPath) { debug('Navigation selector not found'); return; }
     
     
-	    
+        
     // define loading msg
     props.loadingMsg = $('<div id="infscr-loading" style="text-align: center;"><img alt="Loading..." src="'+
                                   opts.loadingImg+'" /><div>'+opts.loadingText+'</div></div>');    
      // preload the image
     (new Image()).src    = opts.loadingImg;
     //Check if its HTML (window scroll)
-	if(opts.container.nodeName=="HTML")
-		{
-		debug("Window Scroll");
-		var innerContainerHeight 	= $(document).height();
-		var binder					= $(window);
-		}
-	else
-		{
-		debug("Local Scroll");
-		var innerContainerHeight 	= hiddenHeight(opts.container);	
-		var binder					= $(opts.container);
-		}
-	// distance from nav links to bottom
+    if(opts.container.nodeName=="HTML")
+        {
+        debug("Window Scroll");
+        var innerContainerHeight    = $(document).height();
+        var binder                  = $(window);
+        }
+    else
+        {
+        debug("Local Scroll");
+        var innerContainerHeight    = hiddenHeight(opts.container); 
+        var binder                  = $(opts.container);
+        }
+    // distance from nav links to bottom
     // computed as: height of the document + top offset of container - top offset of nav link
     opts.pixelsFromNavToBottom =  innerContainerHeight  +
                                      (opts.container == document.documentElement ? 0 : $(opts.container).offset().top )- 
                                      $(opts.navSelector).offset().top;
-	
-	// set up our bindings
+    
+    // set up our bindings
     // bind scroll handler to element (if its a local scroll) or window 
     binder
       .bind('scroll.infscr.'+opts.infid, infscrSetup)
@@ -296,14 +297,14 @@
                           bufferPx        : 40,
                           errorCallback   : function(){},
                           currPage        : 1,
-						  infid		  	  : 0, //Instance ID (Generated at setup)
+                          infid           : 0, //Instance ID (Generated at setup)
                           isDuringAjax    : false,
                           isInvalidPage   : false,
-                          isFiltered	  : false,
+                          isFiltered      : false,
                           isDone          : false,  // for when it goes all the way through the archive.
                           isPaused        : false,
-						  container       : undefined, //If left undefined uses window scroll, set as container for local scroll
-						  pixelsFromNavToBottom	: undefined
+                          container       : undefined, //If left undefined uses window scroll, set as container for local scroll
+                          pixelsFromNavToBottom : undefined
                         }, 
         loadingImg    : undefined,
         loadingMsg    : undefined,
@@ -313,3 +314,5 @@
 
 
 })(jQuery);
+
+/* vim: tabstop=4:softtabstop=4:shiftwidth=4:expandtab */
