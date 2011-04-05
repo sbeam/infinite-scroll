@@ -116,7 +116,9 @@
 	        frag = document.createDocumentFragment();
 	        
 	        
-		    box.load( nextPath + ' ' + opts.itemSelector,null,loadCallback);
+            var url = (opts.itemSelector)? nextPath + ' ' + opts.itemSelector : nextPath;
+
+            box.load(url, null, loadCallback);
 		    
 	    });
         
