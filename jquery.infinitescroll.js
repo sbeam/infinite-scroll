@@ -286,7 +286,7 @@
         defaults      : {
                           debug           : false,
                           preload         : false,
-                          nextSelector    : "div.navigation a:first",
+                          nextSelector    : "div.navigation a:first", // if selector, uses href for next url, or a function that returns the url
                           loadingImg      : "http://www.infinite-scroll.com/loading.gif",
                           loadingText     : "<em>Loading the next set of posts...</em>",
                           donetext        : "<em>Congratulations, you've reached the end of the internet.</em>",
@@ -297,7 +297,6 @@
                           extraScrollPx   : 150,
                           itemSelector    : "div.post",
                           animate         : false,
-                          pathParse       : undefined,
                           bufferPx        : 40,
                           errorCallback   : function(){},
                           currPage        : 1,
