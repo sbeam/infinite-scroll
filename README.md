@@ -97,3 +97,25 @@ based on the original found here:
      
     });
 
+### Custom event triggers and binding.
+
+you can trigger the loading of the next page of content at will. 
+
+    // optionally unbind normal behavior. needs to occur after normal infinite scroll setup.
+    $(window).unbind('.infscr');
+    // call this whenever you want to retrieve the next page of content
+    // likely this would go in a click handler of some sort
+    $(document).trigger('retrieve.infscr')
+
+by triggering `checkscroll.infscr`, you can also trigger a retrieve, but only
+when when the scroll container is near the bottom. For instance, you might be
+removing elements from the scrolled container, and want to fetch a new page to
+insert only if the list becomes short enough.
+
+     function remove_item(item_id) {
+        $('#'+item_id).slideUp('slow', function() { 
+                                            $(this).remove(); 
+                                            $(document).trigger('checkscroll.infscr'); 
+                                            });
+    }
+

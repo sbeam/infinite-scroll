@@ -269,7 +269,11 @@
       .bind('pause.infscr.'+opts.infid, function(event,thisPause) { initPause(thisPause); })
       .trigger('scroll.infscr.'+opts.infid); // trigger the event, in case it's a short page
           
-    $(document).bind('retrieve.infscr.'+opts.infid,kickOffAjax);
+    // the 'retrieve.infscr' event will grab a new page and insert in the scroll container
+    $(document).bind('retrieve.infscr.'+opts.infid, kickOffAjax);
+
+    // and 'checkscroll.infscr' event will cause new page grab if isNearBottom() is true
+    $(document).bind('checkscroll.infscr.'+opts.infid, infscrSetup);
     
     return this;
   
@@ -315,4 +319,6 @@
 
 })(jQuery);
 
-/* vim: tabstop=4:softtabstop=4:shiftwidth=4:expandtab */
+/* 
+vim: tabstop=4:softtabstop=4:shiftwidth=4:expandtab
+*/
